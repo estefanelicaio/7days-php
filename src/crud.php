@@ -14,3 +14,14 @@ function crud_get_users(): array
 
     return json_decode($jsondata, true);
 }
+
+function crud_get_user_by_email(string $email): array
+{
+    $users = crud_get_users();
+
+    foreach($users as $user) {
+        if($user['email'] === $email) {
+            return $user;
+        }
+    }
+}
