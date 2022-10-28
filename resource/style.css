@@ -36,11 +36,11 @@ form input{
 .erro{
     border: 1px solid #dc3545;
 }
-.mensagem-erro{
+.error-message{
     font-size: .7rem;
     color: #dc3545;
 }
-.mensagem-sucesso p{
+.success-message{
     color: #28a745;
     font-weight: 600;
 }
