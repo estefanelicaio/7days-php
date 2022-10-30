@@ -1,6 +1,6 @@
 <?php
 
-function crud_create_user($user): void
+function crud_create_user(array $user): void
 {
     $arr_data = crud_get_users();
     $arr_data[] =  $user;
@@ -15,7 +15,16 @@ function crud_get_users(): array
     return json_decode($jsondata, true);
 }
 
-function crud_get_user_by_email(string $email): array
+function crud_update_user(array $updated_user): void
+{
+    $users = crud_get_users();
+
+    $updated_users = array_map(fn($user) => $user['email'] === $updated_user['email'] ? $updated_user : $user, $users);
+
+    file_put_contents(DATA_LOCATION, json_encode($updated_users), LOCK_EX);
+}
+
+function crud_get_user_by_email(string $email): array|null
 {
     $users = crud_get_users();
 
@@ -24,4 +33,6 @@ function crud_get_user_by_email(string $email): array
             return $user;
         }
     }
+
+    return null;
 }

@@ -2,13 +2,9 @@
 
 
 function render_view(string $template): void
-{
-    session_start();
-    
+{   
     $content = file_get_contents(VIEW_FOLDER.$template.'.view');
     $content = put_data($content);
-
-    session_destroy();
 
     echo $content;
 }

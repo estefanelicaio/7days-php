@@ -18,6 +18,7 @@ function do_register(): void
 
         unset($person['password-confirm']);
         $person['mail_validation'] = false;
+        $person['password'] = md5($person['password']);
         crud_create_user($person);
 
         send_mail(
@@ -26,7 +27,7 @@ function do_register(): void
             "Olá " . $person['name'] . ", para ativar seu usuário clique <a href=\"" . APP_URL . "?page=mail-validation&token=" . ssl_crypt($person['email']) ."\">aqui</a>"
         );
 
-        session_start();
+
         $messages['success'] = ['register' => 'Seu cadastro foi realizado com sucesso! Para ativar o usuário será necessário confirmar o email.'];
         $_SESSION['messages'] = $messages;
 
@@ -36,7 +37,7 @@ function do_register(): void
         $messages['error'] = $validation_errors;
         $values = ['name' => $_POST['person']['name'], 'email' => $_POST['person']['email']];
 
-        session_start();
+
         $_SESSION['messages'] = $messages;
         $_SESSION['values'] = $values;
 
@@ -52,6 +53,20 @@ function do_login(): void
         render_view('login');
         exit();
     }
+
+    // POST METHOD
+    $person = $_POST['person'];
+
+    try {
+        authentication($person['email'], $person['password']);
+        header("Location: /?page=home");
+
+    } catch(Exception $e) {
+        $messages['error'] = ['register' => $e->getMessage()];
+        $_SESSION['messages'] = $messages;
+        header("Location: /?page=login");
+    }
+
 }
 
 function do_validation(): void
@@ -59,7 +74,23 @@ function do_validation(): void
     $email = ssl_decrypt($_GET['token']);
     $user = crud_get_user_by_email($email);
 
-    var_dump($user);
+    if($user) {
+        $user['mail_validation'] = true;
+        crud_update_user($user);
+    
+        $messages['success'] = ['register' => "Usuário " . $user['name'] . " ativado com sucesso!"];
+    } else {
+        $messages['error'] = ['register' => "Token inválido!"];
+    }
+    
+    $_SESSION['messages'] = $messages;
+
+    header("Location: /?page=login");
+}
+
+function do_home(): void
+{
+    render_view('home');
 }
 
 function do_not_found(): void
