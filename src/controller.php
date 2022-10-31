@@ -57,13 +57,16 @@ function do_login(): void
     // POST METHOD
     $person = $_POST['person'];
 
+    $messages = [];
+    $_SESSION['messages'] = &$messages;
+
     try {
         authentication($person['email'], $person['password']);
+        $messages['success'] = ['login' => 'Login realizado com sucesso!'];
         header("Location: /?page=home");
 
     } catch(Exception $e) {
         $messages['error'] = ['register' => $e->getMessage()];
-        $_SESSION['messages'] = $messages;
         header("Location: /?page=login");
     }
 
@@ -90,7 +93,24 @@ function do_validation(): void
 
 function do_home(): void
 {
-    render_view('home');
+    render_view('home', (array) auth_user());
+}
+
+function do_logout(): void
+{
+    auth_logout();
+
+    header("Location: /");
+}
+
+function do_delete_account(): void
+{
+    $authenticated_user = (array) auth_user();
+
+    crud_delete_user($authenticated_user);
+    auth_logout();
+
+    header("Location: /");
 }
 
 function do_not_found(): void

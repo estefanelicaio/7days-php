@@ -27,3 +27,8 @@ function auth_user(): stdClass|null
 {
     return json_decode($_SESSION['user'] ?? ''); 
 }
+
+function auth_logout()
+{
+    unset($_SESSION['user']);
+}

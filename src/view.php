@@ -1,10 +1,11 @@
 <?php
 
 
-function render_view(string $template): void
+function render_view(string $template, array $data = []): void
 {   
     $content = file_get_contents(VIEW_FOLDER.$template.'.view');
     $content = put_data($content);
+    $content = bind_data($content, $data);
 
     echo $content;
 }
@@ -58,6 +59,27 @@ function bind_old_values(string $content, array $values): string
             $content = str_replace("{{ value_$field }}", $values[$field], $content);
         } else {
             $content = str_replace("{{ value_$field }}", "", $content);
+        }
+
+    }
+
+    return $content;
+}
+
+function bind_data(string $content, array $data): string
+{
+    $pattern= "/{{\s?field_[\w-]*\s?}}/";
+    preg_match_all($pattern, $content, $match);
+
+    foreach($match[0] as $place) {
+        
+        $field = str_replace("{{ field_", '', $place);
+        $field = str_replace(' }}', '', $field);
+        
+        if(array_key_exists($field, $data)) {
+            $content = str_replace("{{ field_$field }}", $data[$field], $content);
+        } else {
+            $content = str_replace("{{ field_$field }}", "", $content);
         }
 
     }

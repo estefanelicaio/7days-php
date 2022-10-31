@@ -24,6 +24,15 @@ function crud_update_user(array $updated_user): void
     file_put_contents(DATA_LOCATION, json_encode($updated_users), LOCK_EX);
 }
 
+function crud_delete_user(array $deleted_user): void
+{
+    $users = crud_get_users();
+
+    $users = array_values(array_filter($users, fn($user) => $user['email'] !== $deleted_user['email']));
+
+    file_put_contents(DATA_LOCATION, json_encode($users), LOCK_EX);
+}
+
 function crud_get_user_by_email(string $email): array|null
 {
     $users = crud_get_users();
