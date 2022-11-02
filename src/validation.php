@@ -1,6 +1,6 @@
 <?php
 
-function validate_register($person): array
+function validate_register($person, bool $update = false): array
 {
     $errors_messages = [];
 
@@ -12,14 +12,17 @@ function validate_register($person): array
         $errors_messages['password-confirm'] = 'As senhas devem ser iguais';
     }
 
-    $users = crud_get_users();
-
-    foreach($users as $user) {
-        if($user['email'] === $person['email']) {
-            $errors_messages['email'] = 'Já existe um usuário cadastrado com este email';
-            break;
+    if(!$update) {
+        $users = crud_get_users();
+    
+        foreach($users as $user) {
+            if($user['email'] === $person['email']) {
+                $errors_messages['email'] = 'Já existe um usuário cadastrado com este email';
+                break;
+            }
         }
     }
+
 
     return $errors_messages;
 }

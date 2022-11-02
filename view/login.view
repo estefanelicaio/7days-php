@@ -12,6 +12,7 @@
     <h1>Scuba<span>PHP</span></h1>
     <form action="/?page=login&from=login" method="POST">
         {{ success_register }}
+        {{ success_change-password }}
         {{ error_register }}
         <label for="login">Email</label>
         <input type="text" name="person[email]" value="{{ value_email }}" required>
